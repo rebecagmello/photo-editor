@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">PhotoEditor</string>
+    <string name="load_button">LOAD</string>
+    <string name="crop_button">CROP</string>
+    <string name="crop_butto">CROP</string>
+    <string name="light_button">LIGHT</string>
+    <string name="color_button">COLOR</string>
+    <string name="filters_button">FIlTERS</string>
+    <string name="title_activity_feature">FeatureActivity</string>
+</resources>

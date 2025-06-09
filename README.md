@@ -1,1 +1,1 @@
-# photo-editor
+# photoEditor

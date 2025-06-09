@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.MyApp" parent="Theme.AppCompat.Light">
+        <item name="android:windowBackground">?android:colorBackground</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="actionBarStyle">@style/MyToolbarStyle</item>
+    </style>
+
+    <style name="MyToolbarStyle" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="background">@color/purple_500</item> <!-- cor do fundo da toolbar -->
+        <item name="titleTextStyle">@style/MyToolbarTitleText</item>
+    </style>
+
+    <style name="MyToolbarTitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+</resources>
