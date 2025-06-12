@@ -7,4 +7,8 @@
     <string name="color_button">COLOR</string>
     <string name="filters_button">FIlTERS</string>
     <string name="title_activity_feature">FeatureActivity</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="main_fragment_label">Main</string>
+    <string name="feature_fragment_label">Feature</string>
 </resources>

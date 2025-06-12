@@ -1,47 +1,27 @@
 package com.example.photoeditor
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.example.photoeditor.databinding.ActivityMainBinding
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupActionBarWithNavController
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
-    private var imageUri: Uri? = null
+    private lateinit var navController: NavController
 
-    private val pickImageLauncher =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            uri?.let {
-                imageUri = it
-                binding.imageView.setImageURI(it)
-            }
-        }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_main)
 
-        binding.buttonLoad.setOnClickListener {
-            pickImageLauncher.launch("image/*")
-        }
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
 
-        val buttonMap = mapOf(
-            binding.buttonCrop to "CROP",
-            binding.buttonLight to "LIGHT",
-            binding.buttonColor to "COLOR",
-            binding.buttonFilters to "FILTERS"
-        )
+        setupActionBarWithNavController(navController)
 
-        for ((button, name) in buttonMap) {
-            button.setOnClickListener {
-                val intent = Intent(this, FeatureActivity::class.java)
-                intent.putExtra("feature_name", name)
-                startActivity(intent)
-            }
-        }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return super.onSupportNavigateUp() || navController.navigateUp()
     }
 }

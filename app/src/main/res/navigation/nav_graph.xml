@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name ="com.example.photoeditor.MainFragment"
+        android:label="@string/main_fragment_label" >
+        <action
+            android:id="@+id/action_mainFragment_to_featureFragment"
+            app:destination="@id/featureFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/featureFragment"
+        android:name="com.example.photoeditor.FeatureFragment"
+        android:label="@string/feature_fragment_label" >
+        <argument
+            android:name="feature"
+            app:argType="string" />
+    </fragment>
+</navigation>
