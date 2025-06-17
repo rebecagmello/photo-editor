@@ -11,4 +11,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="main_fragment_label">Main</string>
     <string name="feature_fragment_label">Feature</string>
+    <string name="rotate_button">ROTATE</string>
+    <string name="button_save">SAVE</string>
 </resources>

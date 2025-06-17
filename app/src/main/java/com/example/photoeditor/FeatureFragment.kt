@@ -15,14 +15,14 @@ class FeatureFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-       featureName = arguments?.getString("feature") ?: "null"
+        featureName = arguments?.getString("feature") ?: "null"
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View{
+    ): View {
         _binding = FragmentFeatureBinding.inflate(inflater, container, false)
         return binding.root
     }
