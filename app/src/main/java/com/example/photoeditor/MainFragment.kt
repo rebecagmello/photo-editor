@@ -25,7 +25,7 @@ class MainFragment : Fragment() {
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
 
-    private val mainViewModel: MainViewModel by viewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
     private val sharedViewModel: SharedViewModel by activityViewModels()
 
     @RequiresApi(Build.VERSION_CODES.P)
@@ -66,9 +66,11 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mainViewModel.image.value?.let{ bitmap ->
+
+        mainViewModel.image.observe(viewLifecycleOwner) { bitmap ->
             binding.imageView.setImageBitmap(bitmap)
         }
+
 
         binding.buttonLoad.setOnClickListener {
             pickImageLauncher.launch("image/*") //here i am telling what my load is responsible for
