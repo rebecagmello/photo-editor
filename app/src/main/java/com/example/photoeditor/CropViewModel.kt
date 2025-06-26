@@ -5,12 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.LiveData
 
-class CropViewModel : ViewModel(){
+class CropViewModel : ViewModel() {
 
     private val _image: MutableLiveData<Bitmap> = MutableLiveData()
     val image: LiveData<Bitmap> = _image
 
-    fun changeImage(newImage: Bitmap?){
+    fun changeImage(newImage: Bitmap) {
         _image.postValue(newImage)
     }
 }

@@ -13,4 +13,5 @@
     <string name="feature_fragment_label">Feature</string>
     <string name="rotate_button">ROTATE</string>
     <string name="button_save">SAVE</string>
+    <string name="brightnessText">Brightness: 0</string>
 </resources>

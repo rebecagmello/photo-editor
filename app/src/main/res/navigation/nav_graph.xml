@@ -15,6 +15,9 @@
         <action
             android:id="@+id/action_mainFragment_to_cropFragment"
             app:destination="@id/cropFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_lightFragment"
+            app:destination="@id/lightFragment" />
     </fragment>
 
     <fragment
@@ -33,4 +36,8 @@
             android:name="feature"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/lightFragment"
+        android:name="com.example.photoeditor.LightFragment"
+        android:label="LightFragment" />
 </navigation>

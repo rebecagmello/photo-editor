@@ -2,20 +2,18 @@ package com.example.photoeditor
 
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
-import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import com.example.photoeditor.databinding.FragmentCropBinding
 
 class CropFragment : Fragment() {
 
-    private val mainViewModel : MainViewModel by activityViewModels()
+    private val cropViewModel: MainViewModel by activityViewModels()
     private var _binding: FragmentCropBinding? = null
     private val binding get() = _binding!!
 
@@ -32,8 +30,9 @@ class CropFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mainViewModel.image.observe(viewLifecycleOwner){ bitmap->
-            binding.cropImageView.setImageBitmap(bitmap) }
+        cropViewModel.image.observe(viewLifecycleOwner) { bitmap ->
+            binding.cropImageView.setImageBitmap(bitmap)
+        }
 
 
         binding.buttonRotate.setOnClickListener {
@@ -42,8 +41,8 @@ class CropFragment : Fragment() {
 
         binding.buttonSave.setOnClickListener {
             val cropped = binding.cropImageView.getCroppedImage()
-            cropped?.let{
-                mainViewModel.changeImage(it)
+            cropped?.let {
+                cropViewModel.changeImage(it)
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             }
 
