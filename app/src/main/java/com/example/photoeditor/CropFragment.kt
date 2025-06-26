@@ -13,7 +13,7 @@ import com.example.photoeditor.databinding.FragmentCropBinding
 
 class CropFragment : Fragment() {
 
-    private val cropViewModel: MainViewModel by activityViewModels()
+    private val cropViewModel: SharedViewModel by activityViewModels()
     private var _binding: FragmentCropBinding? = null
     private val binding get() = _binding!!
 

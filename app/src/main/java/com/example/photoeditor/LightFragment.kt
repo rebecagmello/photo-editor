@@ -1,5 +1,6 @@
 package com.example.photoeditor
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,14 +8,20 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import com.example.photoeditor.databinding.FragmentLightBinding
+
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+
+
 
 class LightFragment : Fragment(), OnSeekBarChangeListener {
 
-    private val mainViewModel: LightViewModel by viewModels()
+    private val mainViewModel: SharedViewModel by activityViewModels()
     private var _binding: FragmentLightBinding? = null
     private val binding get() = _binding!!
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,8 +43,25 @@ class LightFragment : Fragment(), OnSeekBarChangeListener {
     }
 
     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-        binding.textView.text = "Brightness: $progress"
+        val brightness = progress
+        binding.textView.text = "Brightness: $brightness"
+
+
+        val matrix = ColorMatrix().apply {
+            set(floatArrayOf(
+                1f, 0f, 0f, 0f, brightness.toFloat(),
+                0f, 1f, 0f, 0f, brightness.toFloat(),
+                0f, 0f, 1f, 0f, brightness.toFloat(),
+                0f, 0f, 0f, 1f, 0f
+            ))
+        }
+
+
+        val filter = ColorMatrixColorFilter(matrix)
+        binding.lightImageView.colorFilter = filter
+
     }
+
 
     override fun onStartTrackingTouch(seekBar: SeekBar?) {
         // do nothing

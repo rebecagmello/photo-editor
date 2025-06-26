@@ -22,7 +22,7 @@ class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: MainViewModel by activityViewModels()
+    private val viewModel: SharedViewModel by activityViewModels()
 
     @RequiresApi(Build.VERSION_CODES.P)
     private val pickImageLauncher =
