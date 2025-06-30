@@ -18,6 +18,12 @@
         <action
             android:id="@+id/action_mainFragment_to_lightFragment"
             app:destination="@id/lightFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_colorFragment"
+            app:destination="@id/colorFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_filterFragment"
+            app:destination="@id/filterFragment" />
     </fragment>
 
     <fragment
@@ -40,4 +46,12 @@
         android:id="@+id/lightFragment"
         android:name="com.example.photoeditor.LightFragment"
         android:label="LightFragment" />
+    <fragment
+        android:id="@+id/colorFragment"
+        android:name="com.example.photoeditor.ColorFragment"
+        android:label="ColorFragment" />
+    <fragment
+        android:id="@+id/filterFragment"
+        android:name="com.example.photoeditor.FilterFragment"
+        android:label="FilterFragment" />
 </navigation>

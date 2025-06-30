@@ -14,4 +14,12 @@
     <string name="rotate_button">ROTATE</string>
     <string name="button_save">SAVE</string>
     <string name="brightnessText">Brightness: 0</string>
+    <string name="saturation">Saturation: 0</string>
+    <string name="contrast">Contrast: 0</string>
+    <string name="constrast_100">Constrast: 100</string>
+    <string name="contrast_100">Contrast : 100</string>
+    <string name="save">SAVE</string>
+    <string name="bw">BW</string>
+    <string name="autumn">AUT</string>
+    <string name="inverted">OPO</string>
 </resources>

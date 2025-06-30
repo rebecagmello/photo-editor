@@ -46,6 +46,13 @@ class MainFragment : Fragment() {
                 viewModel.changeImage(it)
             }
         }
+
+        setFragmentResultListener("light_result") { _, bundle ->
+            val lightedImage = bundle.getParcelable<Bitmap>("bitmap", Bitmap::class.java)
+            lightedImage?.let {
+                viewModel.changeImage(it)
+            }
+        }
     }
 
     override fun onCreateView(
@@ -100,22 +107,19 @@ class MainFragment : Fragment() {
             }
         }
 
-        val navController = findNavController()
-        val buttonMap = mapOf(
-            binding.buttonColor to "COLOR",
-            binding.buttonFilters to "FILTERS"
-        )
+        binding.buttonColor.setOnClickListener {
+            if (isImageSelected()) {
+                findNavController().navigate(R.id.action_mainFragment_to_colorFragment)
+            } else {
+                showSelectImageMessage()
+            }
+        }
 
-        for ((button, name) in buttonMap) {
-            button.setOnClickListener {
-                if (isImageSelected()) {
-                    val bundle = Bundle().apply {
-                        putString("feature", name)
-                    }
-                    navController.navigate(R.id.featureFragment, bundle)
-                } else {
-                    showSelectImageMessage()
-                }
+        binding.buttonFilters.setOnClickListener {
+            if (isImageSelected()) {
+                findNavController().navigate(R.id.action_mainFragment_to_filterFragment)
+            } else {
+                showSelectImageMessage()
             }
         }
     }
