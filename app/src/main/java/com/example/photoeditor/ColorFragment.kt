@@ -5,107 +5,31 @@ import android.graphics.Canvas
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.Paint
-import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.SeekBar
-import androidx.annotation.RequiresApi
-import androidx.fragment.app.activityViewModels
-import com.example.photoeditor.databinding.FragmentColorBinding
-import kotlin.getValue
+import android.widget.SeekBar.OnSeekBarChangeListener
+import androidx.activity.addCallback
 import androidx.core.graphics.createBitmap
 import androidx.core.view.MenuProvider
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.example.photoeditor.databinding.FragmentColorBinding
 
-class ColorFragment : Fragment(){
-    private val colorViewModel: SharedViewModel by activityViewModels()
+class ColorFragment : Fragment(), OnSeekBarChangeListener {
+
+    private val mainViewModel: SharedViewModel by activityViewModels()
     private var _binding: FragmentColorBinding? = null
     private val binding get() = _binding!!
-    private fun setupSeekBars() {
 
-        binding.seekContrastBar.max = 200   
-        binding.seekContrastBar.progress = 100
-
-        binding.seekSaturationBar.max = 200
-        binding.seekSaturationBar.progress = 100
-
-
-        val seekListener = object : OnSeekBarChangeListener {
-            @RequiresApi(Build.VERSION_CODES.O)
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                applyAdjustments()
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        }
-
-        binding.seekContrastBar.setOnSeekBarChangeListener(seekListener)
-        binding.seekSaturationBar.setOnSeekBarChangeListener(seekListener)
-    }
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun applyAdjustments() {
-        val original = colorViewModel.image.value ?: return
-
-        val contrastInput = binding.seekContrastBar.progress
-        val contrastFactor = (contrastInput + 100) / 100f
-
-        val saturationFactor = binding.seekSaturationBar.progress / 100f
-
-        binding.contTextView.text = "Contraste: $contrastInput"
-        binding.satTextView.text = "Saturação: ${"%.2f".format(saturationFactor)}"
-
-        val adjustedBitmap = createAdjustedBitmap(original, contrastFactor, saturationFactor)
-
-        binding.colorImageView.setImageBitmap(adjustedBitmap)
-        colorViewModel.changeImage(adjustedBitmap)
-    }
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun createAdjustedBitmap(
-        original: Bitmap,
-        contrast: Float,
-        saturation: Float
-    ): Bitmap {
-
-        val safeBitmap = if (original.config == Bitmap.Config.HARDWARE || !original.isMutable) {
-            original.copy(Bitmap.Config.ARGB_8888, true)
-        } else {
-            original
-        }
-
-        val contrastMatrix = ColorMatrix().apply {
-            set(floatArrayOf(
-                contrast, 0f, 0f, 0f, 0f,
-                0f, contrast, 0f, 0f, 0f,
-                0f, 0f, contrast, 0f, 0f,
-                0f, 0f, 0f, 1f, 0f
-            ))
-        }
-
-        val saturationMatrix = ColorMatrix().apply {
-            setSaturation(saturation)
-        }
-
-        contrastMatrix.postConcat(saturationMatrix)
-
-        val resultBitmap = createBitmap(safeBitmap.width, safeBitmap.height)
-
-        val canvas = Canvas(resultBitmap)
-        val paint = Paint().apply {
-            colorFilter = ColorMatrixColorFilter(contrastMatrix)
-        }
-
-        canvas.drawBitmap(safeBitmap, 0f, 0f, paint)
-        return resultBitmap
-    }
-
+    private var saturationProgress = 0
+    private var contrastProgress = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -119,24 +43,33 @@ class ColorFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        colorViewModel.image.observe(viewLifecycleOwner) { bitmap ->
+        mainViewModel.image.observe(viewLifecycleOwner) { bitmap ->
             binding.colorImageView.setImageBitmap(bitmap)
         }
-        setupSeekBars()
+
+        binding.seekSaturationBar.setOnSeekBarChangeListener(this)
+        binding.seekContrastBar.setOnSeekBarChangeListener(this)
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            val originalBitmap = mainViewModel.image.value ?: return@addCallback
+
+            val resultBitmap = applyFilters(originalBitmap, saturationProgress, contrastProgress)
+            mainViewModel.changeImage(resultBitmap)
+
+            findNavController().navigateUp()
+        }
 
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+
             }
 
-            @RequiresApi(Build.VERSION_CODES.O)
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     android.R.id.home -> {
-                        val originalBitmap = colorViewModel.image.value ?: return true
-                        val contrast = binding.seekContrastBar.progress.toFloat()
-                        val saturation = binding.seekSaturationBar.progress.toFloat()
-                        val result = createAdjustedBitmap(originalBitmap, contrast = contrast , saturation = saturation)
-                        colorViewModel.changeImage(result)
+                        val originalBitmap = mainViewModel.image.value ?: return true
+                        val result = applyFilters(originalBitmap, saturationProgress, contrastProgress)
+                        mainViewModel.changeImage(result)
                         findNavController().navigateUp()
                         true
                     }
@@ -146,19 +79,62 @@ class ColorFragment : Fragment(){
         }, viewLifecycleOwner)
     }
 
+    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+        when (seekBar?.id) {
+            R.id.seekSaturationBar -> {
+                saturationProgress = progress
+                binding.satTextView.text = "Saturation: $progress"
+            }
+            R.id.seekContrastBar -> {
+                contrastProgress = progress
+                binding.contTextView.text = "Contrast: $progress"
+            }
+        }
+
+        val originalBitmap = mainViewModel.image.value ?: return
+        val resultBitmap = applyFilters(originalBitmap, saturationProgress, contrastProgress)
+        binding.colorImageView.setImageBitmap(resultBitmap)
+    }
+
+    override fun onStartTrackingTouch(seekBar: SeekBar?) {
+        //do nothing
+    }
+
+    override fun onStopTrackingTouch(seekBar: SeekBar?) {
+        //do nothing
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
+    private fun applyFilters(src: Bitmap, saturation: Int, contrast: Int): Bitmap {
+        val mutableSrc = src.copy(Bitmap.Config.ARGB_8888, true)
+        val bmp = createBitmap(mutableSrc.width, mutableSrc.height)
+        val canvas = Canvas(bmp)
+        val paint = Paint()
+
+        val matrix = ColorMatrix()
+
+        val saturationFactor = 2*saturation / 100f
+        matrix.setSaturation(saturationFactor)
+
+        val contrastFactor = (contrast + 100) / 100f
+        matrix.postConcat(ColorMatrix().apply {
+            set(floatArrayOf(
+                contrastFactor, 0f, 0f, 0f, 0f,
+                0f, contrastFactor, 0f, 0f, 0f,
+                0f, 0f, contrastFactor, 0f, 0f,
+                0f, 0f, 0f, 1f, 0f
+            ))
+        })
+
+        paint.colorFilter = ColorMatrixColorFilter(matrix)
+        canvas.drawBitmap(mutableSrc, 0f, 0f, paint)
+
+        return bmp
+    }
+
+
 }
-
-
-
-
-
-
-
-
-
-
-

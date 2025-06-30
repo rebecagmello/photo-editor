@@ -1,59 +1,133 @@
 package com.example.photoeditor
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.Paint
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import com.example.photoeditor.databinding.FragmentFilterBinding
+import androidx.core.graphics.createBitmap
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [FilterFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class FilterFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private val filterViewModel: SharedViewModel by activityViewModels()
+    private var _binding: FragmentFilterBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    private var currentBitmap: Bitmap? = null
+    private var originalBitmap: Bitmap? = null
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentFilterBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        filterViewModel.image.observe(viewLifecycleOwner) { bitmap ->
+            currentBitmap = bitmap
+            originalBitmap = bitmap
+            binding.imageView.setImageBitmap(bitmap)
+        }
+
+        binding.buttonBw.setOnClickListener {
+            currentBitmap?.let {
+                val bwBitmap = applyBlackAndWhiteFilter(originalBitmap ?: it)
+                binding.imageView.setImageBitmap(bwBitmap)
+                currentBitmap = bwBitmap
+            }
+        }
+
+        binding.buttonAutumn.setOnClickListener {
+            currentBitmap?.let {
+                val autumnBitmap = applyAutumnFilter(originalBitmap ?: it)
+                binding.imageView.setImageBitmap(autumnBitmap)
+                currentBitmap = autumnBitmap
+            }
+        }
+
+        binding.buttonInverted.setOnClickListener {
+            currentBitmap?.let {
+                val invertedBitmap = applyInvertedFilter(originalBitmap ?: it)
+                binding.imageView.setImageBitmap(invertedBitmap)
+                currentBitmap = invertedBitmap
+            }
+        }
+
+        binding.buttonSave.setOnClickListener {
+            currentBitmap?.let { bitmap ->
+                filterViewModel.changeImage(bitmap)
+            }
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_filter, container, false)
+    fun applyBlackAndWhiteFilter(src: Bitmap): Bitmap {
+        val mutableSrc = src.copy(Bitmap.Config.ARGB_8888, true)
+        val bmp = createBitmap(mutableSrc.width, mutableSrc.height)
+        val canvas = Canvas(bmp)
+        val paint = Paint()
+
+        val matrix = ColorMatrix().apply {
+            setSaturation(0f)
+        }
+
+        paint.colorFilter = ColorMatrixColorFilter(matrix)
+        canvas.drawBitmap(mutableSrc, 0f, 0f, paint)
+        return bmp
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment FilterFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            FilterFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    fun applyAutumnFilter(src: Bitmap): Bitmap {
+        val mutableSrc = src.copy(Bitmap.Config.ARGB_8888, true)
+        val bmp = createBitmap(mutableSrc.width, mutableSrc.height)
+        val canvas = Canvas(bmp)
+        val paint = Paint()
+
+        val matrix = ColorMatrix().apply {
+            set(floatArrayOf(
+                1f, 0f, 0f, 0f, 50f,
+                0f, 1f, 0f, 0f, 0f,
+                0f, 0f, 1f, 0f, 0f,
+                0f, 0f, 0f, 1f, 0f
+            ))
+        }
+
+        paint.colorFilter = ColorMatrixColorFilter(matrix)
+        canvas.drawBitmap(mutableSrc, 0f, 0f, paint)
+        return bmp
+    }
+
+    fun applyInvertedFilter(src: Bitmap): Bitmap {
+        val mutableSrc = src.copy(Bitmap.Config.ARGB_8888, true)
+        val bmp = createBitmap(mutableSrc.width, mutableSrc.height)
+        val canvas = Canvas(bmp)
+        val paint = Paint()
+
+        val matrix = ColorMatrix().apply {
+            set(floatArrayOf(
+                -1f, 0f, 0f, 0f, 255f,
+                0f, -1f, 0f, 0f, 255f,
+                0f, 0f, -1f, 0f, 255f,
+                0f, 0f, 0f, 1f, 0f
+            ))
+        }
+
+        paint.colorFilter = ColorMatrixColorFilter(matrix)
+        canvas.drawBitmap(mutableSrc, 0f, 0f, paint)
+        return bmp
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
