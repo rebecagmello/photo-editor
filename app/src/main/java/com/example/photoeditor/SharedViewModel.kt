@@ -10,7 +10,7 @@ class SharedViewModel : ViewModel() {
         private val _image: MutableLiveData<Bitmap> = MutableLiveData()
         val image: LiveData<Bitmap> = _image //track image in real time
 
-        fun changeImage(newImage: Bitmap){
+        fun changeImage(newImage: Bitmap?){
             _image.postValue(newImage) // update image
         }
 

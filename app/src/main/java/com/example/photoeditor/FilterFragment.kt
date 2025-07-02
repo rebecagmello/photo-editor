@@ -1,26 +1,35 @@
 package com.example.photoeditor
 
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
-import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.example.photoeditor.databinding.FragmentFilterBinding
-import androidx.core.graphics.createBitmap
 
 class FilterFragment : Fragment() {
     private val filterViewModel: SharedViewModel by activityViewModels()
     private var _binding: FragmentFilterBinding? = null
     private val binding get() = _binding!!
-
     private var currentBitmap: Bitmap? = null
     private var originalBitmap: Bitmap? = null
+
+    companion object {
+        init {
+            System.loadLibrary("photoeditor")
+        }
+    }
+
+    external fun applyNegative(bitmap: Bitmap)
+    external fun applySepia(bitmap: Bitmap)
+    external fun applyGrayscale(bitmap: Bitmap)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,89 +50,47 @@ class FilterFragment : Fragment() {
         }
 
         binding.buttonBw.setOnClickListener {
-            currentBitmap?.let {
-                val bwBitmap = applyBlackAndWhiteFilter(originalBitmap ?: it)
-                binding.imageView.setImageBitmap(bwBitmap)
-                currentBitmap = bwBitmap
+            currentBitmap?.copy(Bitmap.Config.ARGB_8888, true)?.let { bmp ->
+                applyGrayscale(bmp)
+                binding.imageView.setImageBitmap(bmp)
+                currentBitmap = bmp
             }
         }
 
-        binding.buttonAutumn.setOnClickListener {
-            currentBitmap?.let {
-                val autumnBitmap = applyAutumnFilter(originalBitmap ?: it)
-                binding.imageView.setImageBitmap(autumnBitmap)
-                currentBitmap = autumnBitmap
+        binding.buttonSepia.setOnClickListener {
+            currentBitmap?.copy(Bitmap.Config.ARGB_8888, true)?.let { bmp ->
+                applySepia(bmp)
+                binding.imageView.setImageBitmap(bmp)
+                currentBitmap = bmp
             }
         }
 
         binding.buttonInverted.setOnClickListener {
-            currentBitmap?.let {
-                val invertedBitmap = applyInvertedFilter(originalBitmap ?: it)
-                binding.imageView.setImageBitmap(invertedBitmap)
-                currentBitmap = invertedBitmap
+            currentBitmap?.copy(Bitmap.Config.ARGB_8888, true)?.let { bmp ->
+                applyNegative(bmp)
+                binding.imageView.setImageBitmap(bmp)
+                currentBitmap = bmp
             }
         }
 
-        binding.buttonSave.setOnClickListener {
-            currentBitmap?.let { bitmap ->
-                filterViewModel.changeImage(bitmap)
+        requireActivity().addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
             }
-        }
-    }
 
-    fun applyBlackAndWhiteFilter(src: Bitmap): Bitmap {
-        val mutableSrc = src.copy(Bitmap.Config.ARGB_8888, true)
-        val bmp = createBitmap(mutableSrc.width, mutableSrc.height)
-        val canvas = Canvas(bmp)
-        val paint = Paint()
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    android.R.id.home -> {
+                        filterViewModel.changeImage(currentBitmap)
+                        findNavController().navigateUp()
+                        true
+                    }
 
-        val matrix = ColorMatrix().apply {
-            setSaturation(0f)
-        }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner)
 
-        paint.colorFilter = ColorMatrixColorFilter(matrix)
-        canvas.drawBitmap(mutableSrc, 0f, 0f, paint)
-        return bmp
-    }
 
-    fun applyAutumnFilter(src: Bitmap): Bitmap {
-        val mutableSrc = src.copy(Bitmap.Config.ARGB_8888, true)
-        val bmp = createBitmap(mutableSrc.width, mutableSrc.height)
-        val canvas = Canvas(bmp)
-        val paint = Paint()
-
-        val matrix = ColorMatrix().apply {
-            set(floatArrayOf(
-                1f, 0f, 0f, 0f, 50f,
-                0f, 1f, 0f, 0f, 0f,
-                0f, 0f, 1f, 0f, 0f,
-                0f, 0f, 0f, 1f, 0f
-            ))
-        }
-
-        paint.colorFilter = ColorMatrixColorFilter(matrix)
-        canvas.drawBitmap(mutableSrc, 0f, 0f, paint)
-        return bmp
-    }
-
-    fun applyInvertedFilter(src: Bitmap): Bitmap {
-        val mutableSrc = src.copy(Bitmap.Config.ARGB_8888, true)
-        val bmp = createBitmap(mutableSrc.width, mutableSrc.height)
-        val canvas = Canvas(bmp)
-        val paint = Paint()
-
-        val matrix = ColorMatrix().apply {
-            set(floatArrayOf(
-                -1f, 0f, 0f, 0f, 255f,
-                0f, -1f, 0f, 0f, 255f,
-                0f, 0f, -1f, 0f, 255f,
-                0f, 0f, 0f, 1f, 0f
-            ))
-        }
-
-        paint.colorFilter = ColorMatrixColorFilter(matrix)
-        canvas.drawBitmap(mutableSrc, 0f, 0f, paint)
-        return bmp
     }
 
     override fun onDestroyView() {

@@ -2,27 +2,25 @@ package com.example.photoeditor
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import androidx.activity.addCallback
+import androidx.core.graphics.createBitmap
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.example.photoeditor.databinding.FragmentLightBinding
-import androidx.activity.addCallback
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
-import android.graphics.Paint
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import androidx.core.graphics.createBitmap
 import androidx.navigation.fragment.findNavController
-import androidx.core.view.MenuProvider
-import androidx.lifecycle.Lifecycle
-
+import com.example.photoeditor.databinding.FragmentLightBinding
 
 
 class LightFragment : Fragment(), OnSeekBarChangeListener {
@@ -73,6 +71,7 @@ class LightFragment : Fragment(), OnSeekBarChangeListener {
                         findNavController().navigateUp()
                         true
                     }
+
                     else -> false
                 }
             }
@@ -85,12 +84,14 @@ class LightFragment : Fragment(), OnSeekBarChangeListener {
 
 
         val matrix = ColorMatrix().apply {
-            set(floatArrayOf(
-                1f, 0f, 0f, 0f, brightness.toFloat(),
-                0f, 1f, 0f, 0f, brightness.toFloat(),
-                0f, 0f, 1f, 0f, brightness.toFloat(),
-                0f, 0f, 0f, 1f, 0f
-            ))
+            set(
+                floatArrayOf(
+                    1f, 0f, 0f, 0f, brightness.toFloat(),
+                    0f, 1f, 0f, 0f, brightness.toFloat(),
+                    0f, 0f, 1f, 0f, brightness.toFloat(),
+                    0f, 0f, 0f, 1f, 0f
+                )
+            )
         }
 
 
@@ -120,12 +121,14 @@ class LightFragment : Fragment(), OnSeekBarChangeListener {
         val paint = Paint()
 
         val matrix = ColorMatrix().apply {
-            set(floatArrayOf(
-                1f, 0f, 0f, 0f, brightness.toFloat(),
-                0f, 1f, 0f, 0f, brightness.toFloat(),
-                0f, 0f, 1f, 0f, brightness.toFloat(),
-                0f, 0f, 0f, 1f, 0f
-            ))
+            set(
+                floatArrayOf(
+                    1f, 0f, 0f, 0f, brightness.toFloat(),
+                    0f, 1f, 0f, 0f, brightness.toFloat(),
+                    0f, 0f, 1f, 0f, brightness.toFloat(),
+                    0f, 0f, 0f, 1f, 0f
+                )
+            )
         }
 
         paint.colorFilter = ColorMatrixColorFilter(matrix)

@@ -68,11 +68,13 @@ class ColorFragment : Fragment(), OnSeekBarChangeListener {
                 return when (menuItem.itemId) {
                     android.R.id.home -> {
                         val originalBitmap = mainViewModel.image.value ?: return true
-                        val result = applyFilters(originalBitmap, saturationProgress, contrastProgress)
+                        val result =
+                            applyFilters(originalBitmap, saturationProgress, contrastProgress)
                         mainViewModel.changeImage(result)
                         findNavController().navigateUp()
                         true
                     }
+
                     else -> false
                 }
             }
@@ -85,6 +87,7 @@ class ColorFragment : Fragment(), OnSeekBarChangeListener {
                 saturationProgress = progress
                 binding.satTextView.text = "Saturation: $progress"
             }
+
             R.id.seekContrastBar -> {
                 contrastProgress = progress
                 binding.contTextView.text = "Contrast: $progress"
@@ -117,17 +120,19 @@ class ColorFragment : Fragment(), OnSeekBarChangeListener {
 
         val matrix = ColorMatrix()
 
-        val saturationFactor = 2*saturation / 100f
+        val saturationFactor = (saturation + 100) / 100f
         matrix.setSaturation(saturationFactor)
 
         val contrastFactor = (contrast + 100) / 100f
         matrix.postConcat(ColorMatrix().apply {
-            set(floatArrayOf(
-                contrastFactor, 0f, 0f, 0f, 0f,
-                0f, contrastFactor, 0f, 0f, 0f,
-                0f, 0f, contrastFactor, 0f, 0f,
-                0f, 0f, 0f, 1f, 0f
-            ))
+            set(
+                floatArrayOf(
+                    contrastFactor, 0f, 0f, 0f, 0f,
+                    0f, contrastFactor, 0f, 0f, 0f,
+                    0f, 0f, contrastFactor, 0f, 0f,
+                    0f, 0f, 0f, 1f, 0f
+                )
+            )
         })
 
         paint.colorFilter = ColorMatrixColorFilter(matrix)
@@ -135,6 +140,5 @@ class ColorFragment : Fragment(), OnSeekBarChangeListener {
 
         return bmp
     }
-
 
 }
