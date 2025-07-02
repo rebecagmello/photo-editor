@@ -50,26 +50,26 @@ class FilterFragment : Fragment() {
         }
 
         binding.buttonBw.setOnClickListener {
-            currentBitmap?.copy(Bitmap.Config.ARGB_8888, true)?.let { bmp ->
-                applyGrayscale(bmp)
-                binding.imageView.setImageBitmap(bmp)
-                currentBitmap = bmp
+            originalBitmap?.copy(Bitmap.Config.ARGB_8888, true)?.let { bwBitmap ->
+                applyGrayscale(bwBitmap)
+                binding.imageView.setImageBitmap(bwBitmap)
+                currentBitmap = bwBitmap
             }
         }
 
         binding.buttonSepia.setOnClickListener {
-            currentBitmap?.copy(Bitmap.Config.ARGB_8888, true)?.let { bmp ->
-                applySepia(bmp)
-                binding.imageView.setImageBitmap(bmp)
-                currentBitmap = bmp
+            originalBitmap?.copy(Bitmap.Config.ARGB_8888, true)?.let { sepiaBitmap ->
+                applySepia(sepiaBitmap)
+                binding.imageView.setImageBitmap(sepiaBitmap)
+                currentBitmap = sepiaBitmap
             }
         }
 
         binding.buttonInverted.setOnClickListener {
-            currentBitmap?.copy(Bitmap.Config.ARGB_8888, true)?.let { bmp ->
-                applyNegative(bmp)
-                binding.imageView.setImageBitmap(bmp)
-                currentBitmap = bmp
+            originalBitmap?.copy(Bitmap.Config.ARGB_8888, true)?.let { invBitmap ->
+                applyNegative(invBitmap)
+                binding.imageView.setImageBitmap(invBitmap)
+                currentBitmap = invBitmap
             }
         }
 
