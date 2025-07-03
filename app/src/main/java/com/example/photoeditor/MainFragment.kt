@@ -32,7 +32,6 @@ import com.example.photoeditor.databinding.FragmentMainBinding
 import java.io.File
 import androidx.core.view.MenuProvider
 
-
 class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
@@ -47,6 +46,7 @@ class MainFragment : Fragment() {
                 val source = ImageDecoder.createSource(requireContext().contentResolver, uri)
                 val bitmap = ImageDecoder.decodeBitmap(source)
                 viewModel.changeImage(bitmap)
+                viewModel.saveToOldImage(bitmap)
 
             }
         }
@@ -79,7 +79,6 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
-
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -99,11 +98,11 @@ class MainFragment : Fragment() {
             override fun onMenuItemSelected(item: MenuItem): Boolean {
                 return when (item.itemId) {
                     R.id.action_save -> {
-                        saveImageToGallery(viewModel.image.value)
+                        saveImageToGallery(viewModel.image.value!!)
                         true
                     }
                     R.id.action_share -> {
-                        shareImage(viewModel.image.value)
+                        shareImage(viewModel.image.value!!)
                         true
                     }
                     else -> false
@@ -119,14 +118,18 @@ class MainFragment : Fragment() {
             pickImageLauncher.launch("image/*")
         }
 
+        binding.buttonUndo.setOnClickListener {
+            viewModel.returnOldImage()
+        }
+
         fun isImageSelected(): Boolean {
             return viewModel.image.value != null
         }
 
         fun showSelectImageMessage() {
             AlertDialog.Builder(requireContext(), android.R.style.Theme_Material_Light_Dialog_Alert)
-                .setTitle("Atenção")
-                .setMessage("Selecione uma imagem")
+                .setTitle("Attention")
+                .setMessage("Please select an image")
                 .setPositiveButton("OK", null)
                 .create()
                 .show()
@@ -151,6 +154,7 @@ class MainFragment : Fragment() {
 
         binding.buttonColor.setOnClickListener {
             if (isImageSelected()) {
+                viewModel.featureName.value = "Color"
                 findNavController().navigate(R.id.action_mainFragment_to_colorFragment)
             } else {
                 showSelectImageMessage()
@@ -170,7 +174,6 @@ class MainFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
     private fun shareImage(bitmap: Bitmap) {
         val file = File(requireContext().cacheDir, "shared_image.jpg")
         file.outputStream().use {
@@ -184,9 +187,8 @@ class MainFragment : Fragment() {
         }
         startActivity(Intent.createChooser(intent, "Share Image"))
     }
-
     private fun saveImageToGallery(bitmap: Bitmap) {
-        val context = requireContext() // pega uma vez só
+        val context = requireContext()
 
         val filename = "IMG_${System.currentTimeMillis()}.jpg"
         val values = ContentValues().apply {
@@ -203,7 +205,7 @@ class MainFragment : Fragment() {
             contentResolver.openOutputStream(uri)?.use { outputStream ->
                 val saved = bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
                 if (!saved) {
-                    Toast.makeText(context, "Erro ao salvar imagem", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Failed to save image", Toast.LENGTH_SHORT).show()
                     return
                 }
             }
@@ -212,12 +214,11 @@ class MainFragment : Fragment() {
             values.put(MediaStore.Images.Media.IS_PENDING, 0)
             contentResolver.update(uri, values, null, null)
 
-            Toast.makeText(context, "Imagem salva com sucesso", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Image saved!", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(context, "Falha ao salvar imagem", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Failed to save image", Toast.LENGTH_SHORT).show()
         }
     }
-
     private fun setMenuItemColor(menuItem: MenuItem?, color: Int) {
         menuItem?.let {
             val title = it.title.toString()

@@ -33,7 +33,6 @@ class CropFragment : Fragment() {
             binding.cropImageView.setImageBitmap(bitmap)
         }
 
-
         binding.buttonRotate.setOnClickListener {
             binding.cropImageView.rotateImage(90)
         }

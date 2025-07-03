@@ -111,13 +111,11 @@ class ColorFragment : Fragment(), OnSeekBarChangeListener {
         super.onDestroyView()
         _binding = null
     }
-
     private fun applyFilters(src: Bitmap, saturation: Int, contrast: Int): Bitmap {
         val mutableSrc = src.copy(Bitmap.Config.ARGB_8888, true)
         val bmp = createBitmap(mutableSrc.width, mutableSrc.height)
         val canvas = Canvas(bmp)
         val paint = Paint()
-
         val matrix = ColorMatrix()
 
         val saturationFactor = (saturation + 100) / 100f

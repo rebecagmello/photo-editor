@@ -7,11 +7,23 @@ import androidx.lifecycle.ViewModel
 
 class SharedViewModel : ViewModel() {
 
-        private val _image: MutableLiveData<Bitmap> = MutableLiveData()
+    val featureName = MutableLiveData<String>()
+
+    private val _image: MutableLiveData<Bitmap> = MutableLiveData()
         val image: LiveData<Bitmap> = _image //track image in real time
 
-        fun changeImage(newImage: Bitmap?){
+        private val _oldimage : MutableLiveData<Bitmap> = MutableLiveData()
+        val oldimage : LiveData<Bitmap> = _oldimage
+
+        fun changeImage(newImage: Bitmap){
             _image.postValue(newImage) // update image
         }
 
-    }
+        fun saveToOldImage(newImage: Bitmap){
+            _oldimage.postValue(newImage)
+        }
+
+        fun returnOldImage(){
+            changeImage(oldimage.value!!)
+        }
+}

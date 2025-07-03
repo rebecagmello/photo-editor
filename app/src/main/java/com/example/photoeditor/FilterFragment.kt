@@ -26,7 +26,6 @@ class FilterFragment : Fragment() {
             System.loadLibrary("photoeditor")
         }
     }
-
     external fun applyNegative(bitmap: Bitmap)
     external fun applySepia(bitmap: Bitmap)
     external fun applyGrayscale(bitmap: Bitmap)
@@ -80,7 +79,7 @@ class FilterFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     android.R.id.home -> {
-                        filterViewModel.changeImage(currentBitmap)
+                        filterViewModel.changeImage(currentBitmap!!)
                         findNavController().navigateUp()
                         true
                     }
@@ -89,8 +88,6 @@ class FilterFragment : Fragment() {
                 }
             }
         }, viewLifecycleOwner)
-
-
     }
 
     override fun onDestroyView() {

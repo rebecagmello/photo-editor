@@ -29,7 +29,6 @@ class LightFragment : Fragment(), OnSeekBarChangeListener {
     private var _binding: FragmentLightBinding? = null
     private val binding get() = _binding!!
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -46,7 +45,6 @@ class LightFragment : Fragment(), OnSeekBarChangeListener {
         mainViewModel.image.observe(viewLifecycleOwner) { bitmap ->
             binding.lightImageView.setImageBitmap(bitmap)
         }
-
         binding.seekBar.setOnSeekBarChangeListener(this)
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
@@ -71,7 +69,6 @@ class LightFragment : Fragment(), OnSeekBarChangeListener {
                         findNavController().navigateUp()
                         true
                     }
-
                     else -> false
                 }
             }
@@ -81,7 +78,6 @@ class LightFragment : Fragment(), OnSeekBarChangeListener {
     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
         val brightness = progress
         binding.textView.text = "Brightness: $brightness"
-
 
         val matrix = ColorMatrix().apply {
             set(
@@ -93,13 +89,10 @@ class LightFragment : Fragment(), OnSeekBarChangeListener {
                 )
             )
         }
-
-
         val filter = ColorMatrixColorFilter(matrix)
         binding.lightImageView.colorFilter = filter
 
     }
-
 
     override fun onStartTrackingTouch(seekBar: SeekBar?) {
         // do nothing
@@ -113,7 +106,6 @@ class LightFragment : Fragment(), OnSeekBarChangeListener {
         super.onDestroyView()
         _binding = null
     }
-
     private fun applyBrightnessFilter(src: Bitmap, brightness: Int): Bitmap {
         val mutableSrc = src.copy(Bitmap.Config.ARGB_8888, true)
         val bmp = createBitmap(mutableSrc.width, mutableSrc.height)
@@ -136,5 +128,4 @@ class LightFragment : Fragment(), OnSeekBarChangeListener {
 
         return bmp
     }
-
 }

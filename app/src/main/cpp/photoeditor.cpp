@@ -12,13 +12,13 @@ Java_com_example_photoeditor_FilterFragment_applyNegative(
         JNIEnv *env, jobject, jobject bitmap) {
 
     AndroidBitmapInfo info;
-    void* pixels;
+    void *pixels;
 
     if (AndroidBitmap_getInfo(env, bitmap, &info) != ANDROID_BITMAP_RESULT_SUCCESS) return;
     if (AndroidBitmap_lockPixels(env, bitmap, &pixels) != ANDROID_BITMAP_RESULT_SUCCESS) return;
 
     for (int y = 0; y < info.height; y++) {
-        uint32_t* line = (uint32_t*)((char*)pixels + y * info.stride);
+        uint32_t *line = (uint32_t *) ((char *) pixels + y * info.stride);
         for (int x = 0; x < info.width; x++) {
             uint32_t pixel = line[x];
             uint8_t a = (pixel >> 24) & 0xff;
@@ -38,13 +38,13 @@ Java_com_example_photoeditor_FilterFragment_applySepia(
         JNIEnv *env, jobject, jobject bitmap) {
 
     AndroidBitmapInfo info;
-    void* pixels;
+    void *pixels;
 
     if (AndroidBitmap_getInfo(env, bitmap, &info) != ANDROID_BITMAP_RESULT_SUCCESS) return;
     if (AndroidBitmap_lockPixels(env, bitmap, &pixels) != ANDROID_BITMAP_RESULT_SUCCESS) return;
 
     for (int y = 0; y < info.height; y++) {
-        uint32_t* line = (uint32_t*)((char*)pixels + y * info.stride);
+        uint32_t *line = (uint32_t *) ((char *) pixels + y * info.stride);
         for (int x = 0; x < info.width; x++) {
             uint32_t pixel = line[x];
             uint8_t a = (pixel >> 24) & 0xff;
@@ -52,9 +52,9 @@ Java_com_example_photoeditor_FilterFragment_applySepia(
             uint8_t g = (pixel >> 8) & 0xff;
             uint8_t b = pixel & 0xff;
 
-            int tr = CLAMP((int)(0.393 * r + 0.769 * g + 0.189 * b));
-            int tg = CLAMP((int)(0.349 * r + 0.686 * g + 0.168 * b));
-            int tb = CLAMP((int)(0.272 * r + 0.534 * g + 0.131 * b));
+            int tr = CLAMP((int) (0.393 * r + 0.769 * g + 0.189 * b));
+            int tg = CLAMP((int) (0.349 * r + 0.686 * g + 0.168 * b));
+            int tb = CLAMP((int) (0.272 * r + 0.534 * g + 0.131 * b));
 
             line[x] = (a << 24) | (tr << 16) | (tg << 8) | tb;
         }
@@ -69,13 +69,13 @@ Java_com_example_photoeditor_FilterFragment_applyGrayscale(
         JNIEnv *env, jobject, jobject bitmap) {
 
     AndroidBitmapInfo info;
-    void* pixels;
+    void *pixels;
 
     if (AndroidBitmap_getInfo(env, bitmap, &info) != ANDROID_BITMAP_RESULT_SUCCESS) return;
     if (AndroidBitmap_lockPixels(env, bitmap, &pixels) != ANDROID_BITMAP_RESULT_SUCCESS) return;
 
     for (int y = 0; y < info.height; y++) {
-        uint32_t* line = (uint32_t*)((char*)pixels + y * info.stride);
+        uint32_t *line = (uint32_t *) ((char *) pixels + y * info.stride);
         for (int x = 0; x < info.width; x++) {
             uint32_t pixel = line[x];
             uint8_t a = (pixel >> 24) & 0xff;
@@ -98,13 +98,13 @@ Java_com_example_photoeditor_NativeImageFilters_applyBrightness(
         JNIEnv *env, jobject, jobject bitmap, jint value) {
 
     AndroidBitmapInfo info;
-    void* pixels;
+    void *pixels;
 
     if (AndroidBitmap_getInfo(env, bitmap, &info) != ANDROID_BITMAP_RESULT_SUCCESS) return;
     if (AndroidBitmap_lockPixels(env, bitmap, &pixels) != ANDROID_BITMAP_RESULT_SUCCESS) return;
 
     for (int y = 0; y < info.height; y++) {
-        uint32_t* line = (uint32_t*)((char*)pixels + y * info.stride);
+        uint32_t *line = (uint32_t *) ((char *) pixels + y * info.stride);
         for (int x = 0; x < info.width; x++) {
             uint32_t pixel = line[x];
             uint8_t a = (pixel >> 24) & 0xff;

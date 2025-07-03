@@ -3,15 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_save"
-        android:title="Salvar foto"
+        android:title="Save Image"
         android:icon="@drawable/ic_arrow_back_24"
         app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_share"
-        android:title="Compartilhar"
+        android:title="Share Image"
         android:icon="@drawable/ic_arrow_back_24"
         app:showAsAction="never"/>
-
-
 </menu>
