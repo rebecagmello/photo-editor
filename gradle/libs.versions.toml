@@ -15,6 +15,7 @@ activity = "1.10.1"
 navigationFragment = "2.9.0"
 navigationUiKtx = "2.9.0"
 imageCropper = "4.5.0"
+room = "2.7.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -38,6 +39,9 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
 android-image-cropper = { group = "com.vanniktech", name = "android-image-cropper", version.ref = "imageCropper" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 
 
 [plugins]

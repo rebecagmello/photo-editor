@@ -8,6 +8,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -70,6 +71,12 @@ class FilterFragment : Fragment() {
                 binding.imageView.setImageBitmap(invBitmap)
                 currentBitmap = invBitmap
             }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+
+            filterViewModel.changeImage(currentBitmap!!)
+            findNavController().navigateUp()
         }
 
         requireActivity().addMenuProvider(object : MenuProvider {

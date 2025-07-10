@@ -31,23 +31,24 @@ import androidx.navigation.fragment.findNavController
 import com.example.photoeditor.databinding.FragmentMainBinding
 import java.io.File
 import androidx.core.view.MenuProvider
+import com.example.photoeditor.viewmodel.HistoryViewModel
+
 
 class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
     private val viewModel: SharedViewModel by activityViewModels()
+    val historyViewModel: HistoryViewModel by activityViewModels()
 
     @RequiresApi(Build.VERSION_CODES.P)
     private val pickImageLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
-
                 val source = ImageDecoder.createSource(requireContext().contentResolver, uri)
                 val bitmap = ImageDecoder.decodeBitmap(source)
                 viewModel.changeImage(bitmap)
                 viewModel.saveToOldImage(bitmap)
-
             }
         }
 
@@ -93,6 +94,9 @@ class MainFragment : Fragment() {
                 menu.findItem(R.id.action_share)?.let {
                     setMenuItemColor(it, Color.BLUE)
                 }
+                menu.findItem(R.id.action_history)?.let {
+                    setMenuItemColor(it, Color.BLUE)
+                }
             }
 
             override fun onMenuItemSelected(item: MenuItem): Boolean {
@@ -105,6 +109,12 @@ class MainFragment : Fragment() {
                         shareImage(viewModel.image.value!!)
                         true
                     }
+
+                    R.id.action_history -> {
+                        findNavController().navigate(R.id.action_mainFragment_to_historyFragment)
+                        true
+                    }
+
                     else -> false
                 }
             }
@@ -154,7 +164,6 @@ class MainFragment : Fragment() {
 
         binding.buttonColor.setOnClickListener {
             if (isImageSelected()) {
-                viewModel.featureName.value = "Color"
                 findNavController().navigate(R.id.action_mainFragment_to_colorFragment)
             } else {
                 showSelectImageMessage()
@@ -215,10 +224,12 @@ class MainFragment : Fragment() {
             contentResolver.update(uri, values, null, null)
 
             Toast.makeText(context, "Image saved!", Toast.LENGTH_SHORT).show()
+            historyViewModel.addHistory(uri.toString(), filename)
         } else {
             Toast.makeText(context, "Failed to save image", Toast.LENGTH_SHORT).show()
         }
     }
+
     private fun setMenuItemColor(menuItem: MenuItem?, color: Int) {
         menuItem?.let {
             val title = it.title.toString()

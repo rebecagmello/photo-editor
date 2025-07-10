@@ -52,17 +52,13 @@ class ColorFragment : Fragment(), OnSeekBarChangeListener {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             val originalBitmap = mainViewModel.image.value ?: return@addCallback
-
             val resultBitmap = applyFilters(originalBitmap, saturationProgress, contrastProgress)
             mainViewModel.changeImage(resultBitmap)
-
             findNavController().navigateUp()
         }
 
         requireActivity().addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-
-            }
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {}
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
@@ -138,5 +134,4 @@ class ColorFragment : Fragment(), OnSeekBarChangeListener {
 
         return bmp
     }
-
 }

@@ -12,4 +12,11 @@
         android:title="Share Image"
         android:icon="@drawable/ic_arrow_back_24"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_history"
+        android:title="History"
+        android:icon="@drawable/ic_arrow_back_24"
+        app:showAsAction="never" />
+
 </menu>

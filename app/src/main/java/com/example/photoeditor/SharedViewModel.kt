@@ -7,8 +7,6 @@ import androidx.lifecycle.ViewModel
 
 class SharedViewModel : ViewModel() {
 
-    val featureName = MutableLiveData<String>()
-
     private val _image: MutableLiveData<Bitmap> = MutableLiveData()
         val image: LiveData<Bitmap> = _image //track image in real time
 

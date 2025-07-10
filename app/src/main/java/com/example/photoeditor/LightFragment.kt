@@ -36,7 +36,6 @@ class LightFragment : Fragment(), OnSeekBarChangeListener {
     ): View? {
         _binding = FragmentLightBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

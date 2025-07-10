@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.example.photoeditor.databinding.FragmentCropBinding
 
 class CropFragment : Fragment() {
@@ -41,9 +43,15 @@ class CropFragment : Fragment() {
             val cropped = binding.cropImageView.getCroppedImage()
             cropped?.let {
                 cropViewModel.changeImage(it)
-                requireActivity().onBackPressedDispatcher.onBackPressed()
             }
+        }
 
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            val cropped = binding.cropImageView.getCroppedImage()
+            cropped?.let {
+                cropViewModel.changeImage(it)
+            }
+            findNavController().navigateUp()
         }
     }
 
@@ -51,5 +59,4 @@ class CropFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }
